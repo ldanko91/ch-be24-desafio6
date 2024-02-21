@@ -22,9 +22,9 @@ const initializePassport = () => {
       async (req, username, password, done) => {
         try {
           const { first_name, last_name, email } = req.body
-          const user = await DBUsersManager.getUserByEmail({ email: username })
+          const user = await DBUsersManager.getUserByEmail({ email })
           if (user) {
-            console.log('User exists')
+            console.log('Este usuario ya se encuentra registrado previamente')
             return done(null, false)
           }
 
@@ -52,14 +52,13 @@ const initializePassport = () => {
       async (username, password, done) => {
         try {
           const user = await DBUsersManager.getUserByEmail({ email: username })
-
           if (!user) {
-            console.log('Usuario no existe')
+            console.log('Bad request')
             return done(null, false)
           }
 
           if (!useValidPassword(user, password)) {
-            console.log('Password no hace match')
+            console.log('Bad request')
             done(null, false)
           }
 
@@ -81,8 +80,6 @@ const initializePassport = () => {
       },
       async (accessToken, RefreshToken, profile, done) => {
         try {
-          console.log(profile)
-
           const { id, login, name, email } = profile._json
 
           const user = await DBUsersManager.getUserByEmail(email)
@@ -108,12 +105,10 @@ const initializePassport = () => {
   )
 
   passport.serializeUser((user, done) => {
-    console.log('El usuario: ', user)
     done(null, user._id)
   })
 
   passport.deserializeUser(async (id, done) => {
-    console.log('El id: ', id)
     const user = DBUsersManager.getUsers(id)
     done(null, user)
   })

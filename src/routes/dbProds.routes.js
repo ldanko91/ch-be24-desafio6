@@ -8,14 +8,11 @@ dbProdsRouter.get('/', async(req,res)=>{
     let pageq = parseInt(req.query.page) || 1;
     let limitq = parseInt(req.query.limit) || 10;
     const filterByq = req.query.filterBy
-    console.log(filterByq)
     const sortByq = req.query.sortBy || "price";
     const sortOrderq = req.query.sortOrder || "asc";
 
     const { docs, page, totalPages, hasPrevPage, hasNextPage, prevPage, nextPage } = await DBProdsManager.getProducts(pageq, limitq, filterByq, sortByq, sortOrderq);
-    console.log(page, totalPages, hasPrevPage, hasNextPage, prevPage, nextPage)
     const productos = docs
-    console.table(productos)
     res.render('products', {
         productos, page, totalPages, hasPrevPage, hasNextPage, prevPage, nextPage,
         title: "Listado de productos"
@@ -25,7 +22,6 @@ dbProdsRouter.get('/', async(req,res)=>{
 dbProdsRouter.get('/:pcod', async(req,res)=>{
     let {pcod} = req.params
     let productos = await DBProdsManager.getProductByCode(pcod);
-    console.log(productos);
     res.render('productDetail', {
         productos,
         title: `${productos[0].title} código ${pcod}`

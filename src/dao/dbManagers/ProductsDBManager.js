@@ -6,7 +6,6 @@ export default class ProductsDBManager {
     }
 
     getProducts = async (pageq, limitq, filterByq, sortByq, sortOrderq) => {
-        console.log(pageq, limitq, filterByq, sortByq, sortOrderq)
         if (filterByq != null) {
             const formattedFilter = filterByq.replace(/(\w+):/g, '"$1":').replace(/'/g, '');
             const filter = JSON.parse(`{${formattedFilter}}`);

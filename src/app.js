@@ -23,7 +23,6 @@ import __dirname from "./dirname.js";
 config();
 const app = express()
 const PORT = process.env.EXPRESS_PORT
-console.log(PORT)
 const URL = process.env.DB_URL
 const sessionsURL = process.env.SESSIONS_URL
 const secret = process.env.SESSIONS_SECRET
@@ -31,7 +30,6 @@ const secret = process.env.SESSIONS_SECRET
 const httpServer = app.listen(PORT, () => console.log(`Servidor conectado al puerto: ${PORT}`))
 
 //CONFIG MONGOOSE
-console.log(URL)
 const connection = mongoose.connect(URL)
 
 app.use(express.json())

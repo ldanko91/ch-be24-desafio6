@@ -25,9 +25,9 @@ export default class UsersDBManager {
 
     }
 
-    getUserByEmail = async (email) => {
+    getUserByEmail = async (mail) => {
         try {
-            let users = await usersModel.findOne({ email: email }, { __v: 0 }).lean();
+            let users = await usersModel.findOne(mail, { __v: 0 }).lean();
             return users
         } catch (error) {
             console.log(error)

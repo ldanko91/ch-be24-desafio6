@@ -26,8 +26,7 @@ loginRouter.post('/login',
         }
 
             res.json({ status: 'Success', message: 'Logged' })
-    } catch (error) {
-        console.log(error)
+        } catch (error) {
             res.status(500).json({ status: 'error', error: 'Internal Server Error' })
         }
     }
@@ -41,10 +40,9 @@ loginRouter.get(
 loginRouter.get('/github-auth', passport.authenticate('github', { failureRedirect: '/api/sessions/login' }),
     (req, res) => {
         req.session.user = req.user
-        res.redirect('/')
+        res.redirect('/api/sessions/profile')
     }
 )
-
 
 loginRouter.get('/profile', async (req, res) => {
     if (!req.session || !req.session.user) {
@@ -52,11 +50,9 @@ loginRouter.get('/profile', async (req, res) => {
     }
     try {
         let email = req.session.user.email;
-        let user = await DBUsersManager.getUserByEmail(email);
-        console.log('este clog')
-        console.log(user);
+        let user = await DBUsersManager.getUserByEmail({ email: email });
 
-        if (user.role === 'admin') {
+        if (user.role == 'admin') {
             let users = await DBUsersManager.getUsers();
             res.render('adminSection', {
                 users,
@@ -69,7 +65,6 @@ loginRouter.get('/profile', async (req, res) => {
             title: `Perfil de ${user.first_name} ${user.last_name}`
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
@@ -89,26 +84,22 @@ loginRouter.post('/register', passport.authenticate('register', {
             .status(201)
             .json({ status: 'Success', message: 'User has been register' })
     } catch (error) {
-        console.log(error)
         res.status(500).json({ status: 'error', error: 'Internal Server Error' })
     }
     }
 )
 
-
 loginRouter.get('/logout', (req, res) => {
-    req.session.destroy(error => {
-        if (error) return res.json({ error })
-        res.redirect('/login')
-    })
-})
+    req.session.destroy();
+    res.redirect('/api/sessions/login');
+});
+
 
 loginRouter.get('/fail-login', (req, res) => {
     res.json({ status: 'error', error: 'Login failed' })
 })
 
 loginRouter.get('/fail-register', (req, res) => {
-    console.log('Falló registro')
     res.status(400).json({ status: 'error', error: 'Bad request' })
 })
 
@@ -119,7 +110,6 @@ loginRouter.post('/forgot-password', async (req, res) => {
         await Users.updateOne({ email }, { password: passwordEncrypted })
         res.status(200).json({ status: 'Success', message: 'Password updated' })
     } catch (error) {
-        console.log(error)
         res.status(500).json({ status: 'error', error: 'Internal Server Error' })
     }
 })
